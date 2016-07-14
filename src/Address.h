@@ -32,7 +32,7 @@ public:
 
   static const uint32_t n_sets(uint32_t capacity_B, uint32_t associativity,
       uint32_t line_size_B) {
-    return (uint32_t) ceil(capacity_B / (associativity * line_size_B));
+    return (uint32_t) ceil((double) capacity_B / (double) (associativity * line_size_B));
   }
 
   static const uint64_t address_mask() {
