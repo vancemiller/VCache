@@ -18,7 +18,7 @@ private:
   bool dirty;
 
 private:
-  void AccessBytes(const LINE_OFFSET address, const uint8_t size);
+  void AccessBytes(const ADDRESS address, const uint8_t size);
 
 public:
   const ADDRESS address;
@@ -27,8 +27,8 @@ public:
   CacheLine(uint8_t line_size, ADDRESS address);
   virtual ~CacheLine();
 
-  void Read(const LINE_OFFSET address, const uint8_t size);
-  void Write(const LINE_OFFSET address, const uint8_t size);
+  void Read(const ADDRESS address, const uint8_t size);
+  void Write(const ADDRESS address, const uint8_t size);
   bool isDirty() const;
   const std::vector<bool>& getAccessedBytes() const;
 

@@ -7,7 +7,6 @@
 #include "Cache.h"
 
 #include <stddef.h>
-#include <iostream>
 #include <iterator>
 
 #include "CacheLine.h"
@@ -19,7 +18,7 @@ Cache::Cache(const uint32_t n_sets, const uint32_t associativity,
     associativity(associativity), n_bits_tag(n_bits_tag), n_bits_set(
         n_bits_set), n_bits_offset(n_bits_offset), address_mask(address_mask) {
   // Create cache sets
-  sets.resize(n_sets);
+  sets.resize(n_sets, NULL);
 }
 
 Cache::~Cache() {
@@ -39,7 +38,7 @@ Cache::~Cache() {
  */
 bool Cache::Insert(CacheLine& line) {
   SET_INDEX set_index = GetSetIndex(line.address);
-  CacheSet* set = sets[set_index];
+  CacheSet* set = sets.at(set_index);
   if (set == NULL) {
     sets[set_index] = new CacheSet(this);
     set = sets[set_index];
@@ -59,7 +58,7 @@ CacheLine* const Cache::Evict(const ADDRESS address) {
 
 bool Cache::Contains(const ADDRESS address) const {
   SET_INDEX set_index = GetSetIndex(address);
-  CacheSet* set = sets[set_index];
+  CacheSet* set = sets.at(set_index);
   if (set == NULL) {
     return false;
   } else {
@@ -70,7 +69,7 @@ bool Cache::Contains(const ADDRESS address) const {
 
 CacheLine* const Cache::GetLine(const ADDRESS address) const {
   SET_INDEX set_index = GetSetIndex(address);
-  CacheSet* set = sets[set_index];
+  CacheSet* set = sets.at(set_index);
   if (set == NULL) {
     return NULL;
   } else {
@@ -80,7 +79,7 @@ CacheLine* const Cache::GetLine(const ADDRESS address) const {
 
 void Cache::RemoveLine(const ADDRESS address) {
   SET_INDEX set_index = GetSetIndex(address);
-  CacheSet* set = sets[set_index];
+  CacheSet* set = sets.at(set_index);
   if (set != NULL) {
     set->RemoveLine(address);
   }

@@ -10,7 +10,6 @@
 #include <stddef.h>
 #include <set>
 #include <iterator>
-#include <iostream>
 
 CacheSet::CacheSet(const Cache* const cache) :
     cache(cache) {
@@ -46,19 +45,11 @@ CacheLine* const CacheSet::Evict() {
   if (lines_list.size() == cache->associativity) {
     CacheLine* const line = lines_list.back();
     if (line != NULL) {
-      int remove_count = lines_map.erase(cache->GetTag(line->address));
+      lines_map.erase(cache->GetTag(line->address));
       lines_list.remove(line);
-      if (remove_count > 0) {
-        std::cerr << "|---Evict: line removed." << std::endl;
-      } else {
-        std::cerr << "|---Evict: line not removed." << std::endl;
-      }
-    } else {
-      std::cerr << "|---Evict: line not mapped?" << std::endl;
     }
     return line;
   } else {
-    std::cerr << "|---Evict: set not full." << std::endl;
     return NULL;
   }
 }

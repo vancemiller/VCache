@@ -9,7 +9,6 @@
 
 #include <stdexcept>
 #include <stddef.h>
-#include <iostream>
 #include <math.h>
 
 /**
@@ -34,10 +33,6 @@ MultilevelCache::MultilevelCache(const std::vector<uint32_t>& capacities_B,
   int level = 1;
   while (cap != capacities_B.end()) {
     caches.push_back(Cache::Create(*cap, *ass, line_size_B));
-    std::cerr << "------------------  L" << unsigned(level)
-        << " cache  ------------------" << std::endl << "Dimensions: " << *cap
-        << "B " << *ass << "-way set associative, " << line_size_B << "B lines]"
-        << std::endl;
     cap++;
     ass++;
     level++;
@@ -68,8 +63,6 @@ MultilevelCache::~MultilevelCache() {
  */
 std::vector<CacheLine*>& MultilevelCache::Access(const ADDRESS address,
     const uint8_t n_bytes) {
-  std::cerr << "Access: " << std::hex << address << " : " << unsigned(n_bytes)
-      << std::dec << std::endl;
   return SplitAccess(address, n_bytes);
 }
 
@@ -163,7 +156,7 @@ CacheLine& MultilevelCache::SearchExclusive(const ADDRESS address,
   // We have reached the end of the cache hierarchy.
   if (requested == NULL) {
     // Line was not mapped in cache. Create it and insert it in L1.
-    requested = new CacheLine(line_size_B, address);
+    requested = new CacheLine(line_size_B, address - caches.front()->GetLineOffset(address));
     caches.front()->Insert(*requested);
   }
 
