@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <stddef.h>
 #include <math.h>
+#include <algorithm>
 
 /**
  * Constructs a multilevel cache.
@@ -37,6 +38,8 @@ MultilevelCache::MultilevelCache(const std::vector<uint32_t>& capacities_B,
     ass++;
     level++;
   }
+
+  byte_utilizations.resize(line_size_B, 0);
 }
 
 MultilevelCache::~MultilevelCache() {
@@ -68,24 +71,28 @@ std::vector<CacheLine*>& MultilevelCache::Access(const ADDRESS address,
 
 std::vector<CacheLine*>& MultilevelCache::SplitAccess(const ADDRESS address,
     const uint8_t size) {
-  uint8_t bytes_accessed = 0;
-  uint8_t bytes_remaining = size;
-  std::vector<CacheLine*>* accessed_lines = new std::vector<CacheLine*>();
+  std::vector<CacheLine*>* accessed_lines = new std::vector<CacheLine*>;
 
   // We need to compute the line offset for the access address. This is computable
   // via a Cache object. The line offset for an address is the same across all caches
   // because the line size is fixed, so we can choose any cache for this. Choose L1.
   const Cache* const L1 = caches.at(0);
-  const uint32_t line_offset = L1->GetLineOffset(address);
+  uint32_t bytes_to_end_of_line = line_size_B - L1->GetLineOffset(address);
+  uint8_t bytes_accessed = 0;
+  uint8_t bytes_remaining = size;
+
   do {
-    uint32_t bytes_to_end_of_line = line_size_B - line_offset;
     uint8_t access_size = (
         bytes_remaining < bytes_to_end_of_line ?
             bytes_remaining : bytes_to_end_of_line);
+
     accessed_lines->push_back(
         &SearchInclusive(address + bytes_accessed, access_size));
+
     bytes_accessed += access_size;
     bytes_remaining -= access_size;
+    bytes_to_end_of_line =
+        bytes_remaining < line_size_B ? bytes_remaining : line_size_B;
   } while (bytes_remaining > 0);
   return *accessed_lines;
 }
@@ -156,13 +163,18 @@ CacheLine& MultilevelCache::SearchExclusive(const ADDRESS address,
   // We have reached the end of the cache hierarchy.
   if (requested == NULL) {
     // Line was not mapped in cache. Create it and insert it in L1.
-    requested = new CacheLine(line_size_B, address - caches.front()->GetLineOffset(address));
+    requested = new CacheLine(line_size_B,
+        address - caches.front()->GetLineOffset(address));
     caches.front()->Insert(*requested);
   }
 
   if (evicted != NULL) {
     // We have evicted a line from the cache hierarchy. Delete it.
-    delete evicted;
+    std::vector<bool> accessedBytes = evicted->getAccessedBytes();
+    int utilization = std::count(accessedBytes.begin(), accessedBytes.end(),
+        true);
+    byte_utilizations.at(utilization - 1)++;delete
+evicted    ;
   }
   return *requested;
 }
@@ -210,7 +222,8 @@ CacheLine& MultilevelCache::SearchInclusive(const ADDRESS address,
   // We have reached the end of the cache hierarchy.
   if (requested == NULL) {
     // Line was not mapped in cache. Create it and insert it in L1.
-    requested = new CacheLine(line_size_B, address);
+    requested = new CacheLine(line_size_B,
+        address - caches.front()->GetLineOffset(address));
     caches.front()->Insert(*requested);
   }
 
@@ -218,6 +231,13 @@ CacheLine& MultilevelCache::SearchInclusive(const ADDRESS address,
     // Remove line from all other levels of the heirarchy (inclusive cache).
     for (std::vector<Cache*>::iterator it = caches.begin(); it != caches.end();
         it++) {
+      (*it)->RemoveLine(evicted->address);
+    }
+    std::vector<bool> accessedBytes = evicted->getAccessedBytes();
+    int utilization = std::count(accessedBytes.begin(), accessedBytes.end(),
+        true);
+    if (utilization) {
+      byte_utilizations.at(utilization - 1)++;
     }
     // We have evicted a line from the cache hierarchy. Delete it.
     delete evicted;

@@ -27,6 +27,7 @@ private:
   CacheLine& SearchInclusive(const ADDRESS address, const uint8_t size_B);
 
 public:
+  std::vector<uint64_t> byte_utilizations;
   const uint8_t n_levels;
   const uint32_t line_size_B;
 
