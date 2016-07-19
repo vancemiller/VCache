@@ -12,7 +12,6 @@
 
 namespace {
 
-
 class DirectMappedCacheSetTest: public ::testing::Test {
 protected:
   static const uint32_t LINE_SIZE_B = 1;
@@ -86,7 +85,7 @@ TEST_F(DirectMappedCacheSetTest, SetInsertDuplicate) {
   ASSERT_TRUE(set->Insert(*line0));
 }
 
-TEST_F(DirectMappedCacheSetTest, CacheRemoveLine) {
+TEST_F(DirectMappedCacheSetTest, SetRemoveLine) {
   ASSERT_FALSE(set->Contains(line0->address));
   set->Insert(*line0);
   ASSERT_TRUE(set->Contains(line0->address));
@@ -98,6 +97,18 @@ TEST_F(DirectMappedCacheSetTest, CacheRemoveLine) {
   set->RemoveLine(line0->address);
   ASSERT_FALSE(cache->Contains(line0->address));
   ASSERT_TRUE(set->Contains(line1->address));
+}
+
+TEST_F(DirectMappedCacheSetTest, SetLargeInsert) {
+  const int access_max = 1024 * 1024;
+  for (int i = 0; i < access_max; i++) {
+    CacheLine *line = new CacheLine(rand(), LINE_SIZE_B);
+    if (!set->Insert(*line)) {
+      CacheLine* evicted = set->EvictLRU();
+      delete evicted;
+      set->Insert(*line);
+    }
+  }
 }
 
 }

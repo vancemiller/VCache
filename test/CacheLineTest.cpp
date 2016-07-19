@@ -114,4 +114,18 @@ TEST_F(CacheLineTest, AccessedBytes5) {
     }
   }
 }
+
+TEST_F(CacheLineTest, LargeWriteTest) {
+   const int access_count = 1024 * 1024;
+   for (int i = 0; i < access_count; i++) {
+     line->Write(LINE_ADDRESS, LINE_SIZE);
+   }
+}
+
+TEST_F(CacheLineTest, LargeReadTest) {
+   const int access_count = 1024 * 1024;
+   for (int i = 0; i < access_count; i++) {
+     line->Read(LINE_ADDRESS, LINE_SIZE);
+   }
+}
 }

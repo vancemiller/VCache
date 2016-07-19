@@ -13,6 +13,7 @@
 #include "CacheLineTest.cpp"
 #include "DirectMappedCacheSetTest.cpp"
 #include "DirectMappedCacheTest.cpp"
+#include "LargeMultilevelCacheTest.cpp"
 #include "MultilevelCacheTest.cpp"
 
 int main(int argc, char **argv) {

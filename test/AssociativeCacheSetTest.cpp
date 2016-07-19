@@ -159,4 +159,16 @@ TEST_F(AssociativeCacheSetTest, SetRemoveLine) {
   ASSERT_FALSE(set->Contains(line1->address));
   ASSERT_FALSE(set->Contains(line2->address));
 }
+
+TEST_F(AssociativeCacheSetTest, SetLargeInsert) {
+  const int access_max = 1024 * 1024;
+  for (int i = 0; i < access_max; i++) {
+    CacheLine *line = new CacheLine(rand(), LINE_SIZE_B);
+    if (!set->Insert(*line)) {
+      CacheLine* evicted = set->EvictLRU();
+      delete evicted;
+      set->Insert(*line);
+    }
+  }
+}
 }
