@@ -23,7 +23,7 @@ public:
   /**
    * Returns the number of bits required to represent n_sets.
    */
-  static const uint8_t n_bits_set(uint32_t n_sets) {
+  static const uint8_t GetSetBitCount(uint32_t n_sets) {
     return (uint8_t) ceil(log2(n_sets));
   }
 
@@ -31,7 +31,7 @@ public:
    * Returns the number of bits required to represent the byte offset
    * of an address with line_size_B byte cache lines.
    */
-  static const uint8_t n_bits_offset(uint32_t line_size_B) {
+  static const uint8_t GetOffsetBitCount(uint32_t line_size_B) {
     return ((uint8_t) ceil(log2(line_size_B)));
   }
 
@@ -39,7 +39,7 @@ public:
    * Returns the number of bits required to represent the tag of an
    * address with n_bits_set and n_bits_offset.
    */
-  static const uint8_t n_bits_tag(uint8_t n_bits_set, uint8_t n_bits_offset) {
+  static const uint8_t GetTagBitCount(uint8_t n_bits_set, uint8_t n_bits_offset) {
     // sizeof returns bytes: convert to bits.
     return sizeof(ADDRESS) * BITS_IN_BYTE - (n_bits_set + n_bits_offset);
   }
@@ -48,7 +48,7 @@ public:
    * Returns the number of sets required in a cache of capacity_B bytes
    * with *-way associativity and line_size_B byte cache lines.
    */
-  static const uint32_t n_sets(uint32_t capacity_B, uint32_t associativity,
+  static const uint32_t GetSetCount(uint32_t capacity_B, uint32_t associativity,
       uint32_t line_size_B) {
     return (uint32_t) ceil(
         (double) capacity_B / (double) (associativity * line_size_B));
@@ -57,7 +57,7 @@ public:
   /**
    * Returns a bitmask that is the size of the address type.
    */
-  static const uint64_t address_mask() {
+  static const uint64_t GetAddressMask() {
     return (((uint64_t) 1) << (sizeof(ADDRESS) * BITS_IN_BYTE)) - 1;
   }
 };

@@ -43,12 +43,12 @@ public:
    */
   static Cache* const Create(const uint32_t capacity_B,
       const uint32_t associativity, const uint32_t line_size_B) {
-    const uint32_t n_sets = Address::n_sets(capacity_B, associativity,
+    const uint32_t n_sets = Address::GetSetCount(capacity_B, associativity,
         line_size_B);
-    const uint8_t n_bits_set = Address::n_bits_set(n_sets);
-    const uint8_t n_bits_offset = Address::n_bits_offset(line_size_B);
-    const uint8_t n_bits_tag = Address::n_bits_tag(n_bits_set, n_bits_offset);
-    const uint64_t address_mask = Address::address_mask();
+    const uint8_t n_bits_set = Address::GetSetBitCount(n_sets);
+    const uint8_t n_bits_offset = Address::GetOffsetBitCount(line_size_B);
+    const uint8_t n_bits_tag = Address::GetTagBitCount(n_bits_set, n_bits_offset);
+    const uint64_t address_mask = Address::GetAddressMask();
     return new Cache(n_sets, associativity, n_bits_tag, n_bits_set,
         n_bits_offset, address_mask);
   }
