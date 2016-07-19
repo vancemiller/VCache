@@ -62,19 +62,19 @@ TEST_F(AssociativeCacheTest, CacheInsertDuplicates) {
   ASSERT_TRUE(cache->Insert(*line3));
 }
 
-TEST_F(AssociativeCacheTest, CacheInsertAfterEvict) {
+TEST_F(AssociativeCacheTest, CacheInsertAfterEvictLRU) {
   ASSERT_TRUE(cache->Insert(*line0));
   ASSERT_TRUE(cache->Insert(*line1));
-  ASSERT_EQ(line0, cache->Evict(0));
+  ASSERT_EQ(line0, cache->EvictLRU(0));
   ASSERT_TRUE(cache->Insert(*line0));
   ASSERT_TRUE(cache->Insert(*line2));
   ASSERT_TRUE(cache->Insert(*line3));
-  ASSERT_EQ(line2, cache->Evict(1));
+  ASSERT_EQ(line2, cache->EvictLRU(1));
   ASSERT_TRUE(cache->Insert(*line2));
 }
 
-TEST_F(AssociativeCacheTest, CacheEvictNotMapped) {
-  ASSERT_EQ(NULL, cache->Evict(0));
+TEST_F(AssociativeCacheTest, CacheEvictLRUNotMapped) {
+  ASSERT_EQ(NULL, cache->EvictLRU(0));
 }
 
 TEST_F(AssociativeCacheTest, CacheContains) {
@@ -90,8 +90,8 @@ TEST_F(AssociativeCacheTest, CacheContains) {
   ASSERT_TRUE(cache->Contains(line1->address));
   ASSERT_TRUE(cache->Contains(line2->address));
   ASSERT_TRUE(cache->Contains(line3->address));
-  cache->Evict(line1->address);
-  cache->Evict(line3->address);
+  cache->EvictLRU(line1->address);
+  cache->EvictLRU(line3->address);
   ASSERT_FALSE(cache->Contains(line0->address));
   ASSERT_TRUE(cache->Contains(line1->address));
   ASSERT_FALSE(cache->Contains(line2->address));
@@ -123,22 +123,22 @@ TEST_F(AssociativeCacheTest, CacheGetLine) {
   ASSERT_EQ(line1, cache->GetLine(line1->address));
   ASSERT_EQ(line2, cache->GetLine(line2->address));
   ASSERT_EQ(line3, cache->GetLine(line3->address));
-  cache->Evict(line3->address);
+  cache->EvictLRU(line3->address);
   ASSERT_EQ(line0, cache->GetLine(line0->address));
   ASSERT_EQ(line1, cache->GetLine(line1->address));
   ASSERT_EQ(NULL, cache->GetLine(line2->address));
   ASSERT_EQ(line3, cache->GetLine(line3->address));
-  cache->Evict(line2->address);
+  cache->EvictLRU(line2->address);
   ASSERT_EQ(line0, cache->GetLine(line0->address));
   ASSERT_EQ(line1, cache->GetLine(line1->address));
   ASSERT_EQ(NULL, cache->GetLine(line2->address));
   ASSERT_EQ(line3, cache->GetLine(line3->address));
-  cache->Evict(line1->address);
+  cache->EvictLRU(line1->address);
   ASSERT_EQ(NULL, cache->GetLine(line0->address));
   ASSERT_EQ(line1, cache->GetLine(line1->address));
   ASSERT_EQ(NULL, cache->GetLine(line2->address));
   ASSERT_EQ(line3, cache->GetLine(line3->address));
-  cache->Evict(line0->address);
+  cache->EvictLRU(line0->address);
   ASSERT_EQ(NULL, cache->GetLine(line0->address));
   ASSERT_EQ(line1, cache->GetLine(line1->address));
   ASSERT_EQ(NULL, cache->GetLine(line2->address));

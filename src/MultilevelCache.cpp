@@ -125,7 +125,7 @@ CacheLine& MultilevelCache::SearchExclusive(const ADDRESS address,
   // If the line was not found in L1, evict a line if the cache is full
   if (requested == NULL) {
     // Evict returns NULL if there is space available.
-    evicted = (*cache)->Evict(address);
+    evicted = (*cache)->EvictLRU(address);
   }
 
   cache++;
@@ -140,7 +140,7 @@ CacheLine& MultilevelCache::SearchExclusive(const ADDRESS address,
       (*cache)->RemoveLine(address);
     }
     // Evict a line if the cache is full to make room for the evicted line
-    CacheLine* const tmp = (*cache)->Evict(evicted->address);
+    CacheLine* const tmp = (*cache)->EvictLRU(evicted->address);
     // Insert the previously evicted line
     (*cache)->Insert(*evicted);
     // Repeat if necessary...
@@ -192,7 +192,7 @@ CacheLine& MultilevelCache::SearchInclusive(const ADDRESS address,
   // If the line was not found in L1, evict a line if the cache is full
   if (requested == NULL) {
     // Evict returns NULL if there is space available.
-    evicted = (*cache)->Evict(address);
+    evicted = (*cache)->EvictLRU(address);
   }
 
   cache++;
@@ -203,7 +203,7 @@ CacheLine& MultilevelCache::SearchInclusive(const ADDRESS address,
     // Search for the requested line
     requested = (*cache)->GetLine(address);
     // Evict a line if the cache is full to make room for the evicted line
-    CacheLine* const tmp = (*cache)->Evict(evicted->address);
+    CacheLine* const tmp = (*cache)->EvictLRU(evicted->address);
     // Insert the previously evicted line
     (*cache)->Insert(*evicted);
     // Repeat if necessary...

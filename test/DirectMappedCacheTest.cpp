@@ -52,17 +52,17 @@ TEST_F(DirectMappedCacheTest, CacheInsertDuplicates) {
   ASSERT_TRUE(cache->Insert(*line1));
 }
 
-TEST_F(DirectMappedCacheTest, CacheInsertAfterEvict) {
+TEST_F(DirectMappedCacheTest, CacheInsertAfterEvictLRU) {
   ASSERT_TRUE(cache->Insert(*line0));
-  ASSERT_EQ(line0, cache->Evict(0));
+  ASSERT_EQ(line0, cache->EvictLRU(0));
   ASSERT_TRUE(cache->Insert(*line0));
   ASSERT_TRUE(cache->Insert(*line1));
-  ASSERT_EQ(line1, cache->Evict(1));
+  ASSERT_EQ(line1, cache->EvictLRU(1));
   ASSERT_TRUE(cache->Insert(*line1));
 }
 
-TEST_F(DirectMappedCacheTest, CacheEvictNotMapped) {
-  ASSERT_EQ(NULL, cache->Evict(0));
+TEST_F(DirectMappedCacheTest, CacheEvictLRUNotMapped) {
+  ASSERT_EQ(NULL, cache->EvictLRU(0));
 }
 
 TEST_F(DirectMappedCacheTest, CacheContains) {
@@ -71,14 +71,14 @@ TEST_F(DirectMappedCacheTest, CacheContains) {
   cache->Insert(*line0);
   ASSERT_TRUE(cache->Contains(line0->address));
   ASSERT_FALSE(cache->Contains(line1->address));
-  cache->Evict(line0->address);
+  cache->EvictLRU(line0->address);
   cache->Insert(*line1);
   ASSERT_FALSE(cache->Contains(line0->address));
   ASSERT_TRUE(cache->Contains(line1->address));
-  cache->Evict(line0->address);
+  cache->EvictLRU(line0->address);
   ASSERT_FALSE(cache->Contains(line0->address));
   ASSERT_TRUE(cache->Contains(line1->address));
-  cache->Evict(line1->address);
+  cache->EvictLRU(line1->address);
   ASSERT_FALSE(cache->Contains(line0->address));
   ASSERT_FALSE(cache->Contains(line1->address));
 }
@@ -92,10 +92,10 @@ TEST_F(DirectMappedCacheTest, CacheGetLine) {
   cache->Insert(*line1);
   ASSERT_EQ(line0, cache->GetLine(line0->address));
   ASSERT_EQ(line1, cache->GetLine(line1->address));
-  cache->Evict(line0->address);
+  cache->EvictLRU(line0->address);
   ASSERT_EQ(NULL, cache->GetLine(line0->address));
   ASSERT_EQ(line1, cache->GetLine(line1->address));
-  cache->Evict(line1->address);
+  cache->EvictLRU(line1->address);
   ASSERT_EQ(NULL, cache->GetLine(line0->address));
   ASSERT_EQ(NULL, cache->GetLine(line1->address));
 }
