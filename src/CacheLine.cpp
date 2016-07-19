@@ -36,6 +36,6 @@ const std::vector<bool>& CacheLine::getAccessedBytes() const {
 void CacheLine::AccessBytes(const ADDRESS address, const uint8_t size) {
   for (uint32_t i = address - this->address; i < address - this->address + size;
       i++) {
-    accessed_bytes.at(i) = true;
+    accessed_bytes[i] = true;
   }
 }

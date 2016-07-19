@@ -14,29 +14,63 @@
 
 class CacheLine {
 private:
+  // A vector<bool> is a bit vector and will use accessed_bytes bits of storage.
   std::vector<bool> accessed_bytes;
   bool dirty;
-
-private:
-  void AccessBytes(const ADDRESS address, const uint8_t size);
 
 public:
   const ADDRESS address;
 
+private:
+  /**
+   * Marks bytes as accessed in the accessed_bytes vector.
+   *
+   * @param address the start of the access.
+   * @param size the number of bytes accessed.
+   */
+  void AccessBytes(const ADDRESS address, const uint8_t size);
+
 public:
-  CacheLine(uint8_t line_size, ADDRESS address);
+  /**
+   * Constructs a CacheLine.
+   *
+   * @param line_size the number of bytes in the line.
+   * @param line_start_address the address of the first byte in the line.
+   */
+  CacheLine(uint8_t line_size, ADDRESS line_start_address);
+
+  /**
+   * CacheLine destructor.
+   */
   virtual ~CacheLine();
 
+  /**
+   * Read the CacheLine. Sets accessed_bytes according to address and size.
+   */
   void Read(const ADDRESS address, const uint8_t size);
+
+  /**
+   * Write the CacheLine. Sets accessed_bytes according to address and size and
+   * sets the dirty bit.
+   */
   void Write(const ADDRESS address, const uint8_t size);
+
+  /**
+   * Returns true iff the line has been written to.
+   */
   bool isDirty() const;
+
+  /**
+   * Returns a vector<bool> of the accessed bytes in the cache line.
+   * The bit at position i is set iff byte i was accessed.
+   */
   const std::vector<bool>& getAccessedBytes() const;
 
   friend std::ostream& operator<<(std::ostream& stream,
       const CacheLine& line) {
-    stream << "Address first requested: " << std::hex << line.address << std::dec;
+    stream << "Address: " << std::hex << line.address << std::dec;
     stream << ", Utilization: ";
-    for (std::vector<bool>::const_iterator it = line.accessed_bytes.begin(); it < line.accessed_bytes.end(); it++) {
+    for (std::vector<bool>::const_iterator it = line.accessed_bytes.begin(); it != line.accessed_bytes.end(); it++) {
       if ((*it)) {
         stream << "1";
       } else {
