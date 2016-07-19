@@ -54,49 +54,49 @@ TEST_F(AssociativeCacheSetTest, SetInsertFull) {
   ASSERT_FALSE(set->Insert(*line3));
 }
 
-TEST_F(AssociativeCacheSetTest, SetEvictFull) {
+TEST_F(AssociativeCacheSetTest, SetEvictLRUFull) {
   set->Insert(*line1);
   set->Insert(*line2);
-  ASSERT_EQ(line1, set->Evict());
+  ASSERT_EQ(line1, set->EvictLRU());
 }
 
-TEST_F(AssociativeCacheSetTest, SetInsertAfterEvictFull) {
+TEST_F(AssociativeCacheSetTest, SetInsertAfterEvictLRUFull) {
   set->Insert(*line1);
   set->Insert(*line2);
-  ASSERT_EQ(line1, set->Evict());
+  ASSERT_EQ(line1, set->EvictLRU());
   set->Insert(*line3);
-  ASSERT_EQ(line2, set->Evict());
+  ASSERT_EQ(line2, set->EvictLRU());
   set->Insert(*line1);
-  ASSERT_EQ(line3, set->Evict());
+  ASSERT_EQ(line3, set->EvictLRU());
 }
 
-TEST_F(AssociativeCacheSetTest, SetEvictEmpty) {
-  ASSERT_EQ(NULL, set->Evict());
+TEST_F(AssociativeCacheSetTest, SetEvictLRUEmpty) {
+  ASSERT_EQ(NULL, set->EvictLRU());
 }
 
-TEST_F(AssociativeCacheSetTest, SetEvictNotFull1) {
+TEST_F(AssociativeCacheSetTest, SetEvictLRUNotFull1) {
   set->Insert(*line1);
-  ASSERT_EQ(NULL, set->Evict());
+  ASSERT_EQ(NULL, set->EvictLRU());
 }
 
-TEST_F(AssociativeCacheSetTest, SetEvictNotFull2) {
+TEST_F(AssociativeCacheSetTest, SetEvictLRUNotFull2) {
   set->Insert(*line2);
-  ASSERT_EQ(NULL, set->Evict());
+  ASSERT_EQ(NULL, set->EvictLRU());
 }
 
-TEST_F(AssociativeCacheSetTest, SetEvictFullEmpty) {
+TEST_F(AssociativeCacheSetTest, SetEvictLRUFullEmpty) {
   set->Insert(*line2);
   set->Insert(*line1);
-  ASSERT_EQ(line2, set->Evict());
-  ASSERT_EQ(NULL, set->Evict());
+  ASSERT_EQ(line2, set->EvictLRU());
+  ASSERT_EQ(NULL, set->EvictLRU());
 }
 
-TEST_F(AssociativeCacheSetTest, SetEvictEmptyFull) {
-  ASSERT_EQ(NULL, set->Evict());
+TEST_F(AssociativeCacheSetTest, SetEvictLRUEmptyFull) {
+  ASSERT_EQ(NULL, set->EvictLRU());
   set->Insert(*line1);
-  ASSERT_EQ(NULL, set->Evict());
+  ASSERT_EQ(NULL, set->EvictLRU());
   set->Insert(*line2);
-  ASSERT_EQ(line1, set->Evict());
+  ASSERT_EQ(line1, set->EvictLRU());
 }
 
 TEST_F(AssociativeCacheSetTest, SetContains) {
@@ -108,7 +108,7 @@ TEST_F(AssociativeCacheSetTest, SetContains) {
   set->Insert(*line2);
   ASSERT_TRUE(set->Contains(line1->address));
   ASSERT_TRUE(set->Contains(line2->address));
-  set->Evict();
+  set->EvictLRU();
   ASSERT_FALSE(set->Contains(line1->address));
   ASSERT_TRUE(set->Contains(line2->address));
 }
@@ -122,7 +122,7 @@ TEST_F(AssociativeCacheSetTest, SetGetLine) {
   set->Insert(*line2);
   ASSERT_EQ(line1, set->GetLine(line1->address));
   ASSERT_EQ(line2, set->GetLine(line2->address));
-  set->Evict();
+  set->EvictLRU();
   ASSERT_EQ(NULL, set->GetLine(line1->address));
   ASSERT_EQ(line2, set->GetLine(line2->address));
 }
@@ -134,7 +134,7 @@ TEST_F(AssociativeCacheSetTest, SetInsertDuplicates) {
   ASSERT_TRUE(set->Insert(*line1));
   ASSERT_EQ(line1, set->GetLine(line1->address));
   ASSERT_EQ(line2, set->GetLine(line2->address));
-  set->Evict();
+  set->EvictLRU();
   ASSERT_EQ(line1, set->GetLine(line1->address));
   ASSERT_EQ(NULL, set->GetLine(line2->address));
 }

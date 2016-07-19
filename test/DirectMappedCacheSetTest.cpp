@@ -44,32 +44,32 @@ TEST_F(DirectMappedCacheSetTest, SetInsertFull) {
   ASSERT_FALSE(set->Insert(*line1));
 }
 
-TEST_F(DirectMappedCacheSetTest, SetEvictFull) {
+TEST_F(DirectMappedCacheSetTest, SetEvictLRUFull) {
   set->Insert(*line0);
-  ASSERT_EQ(line0, set->Evict());
+  ASSERT_EQ(line0, set->EvictLRU());
 }
 
-TEST_F(DirectMappedCacheSetTest, SetEvictEmpty) {
-  ASSERT_EQ(NULL, set->Evict());
+TEST_F(DirectMappedCacheSetTest, SetEvictLRUEmpty) {
+  ASSERT_EQ(NULL, set->EvictLRU());
 }
 
-TEST_F(DirectMappedCacheSetTest, SetEvictFullEmpty) {
+TEST_F(DirectMappedCacheSetTest, SetEvictLRUFullEmpty) {
   set->Insert(*line0);
-  ASSERT_EQ(line0, set->Evict());
-  ASSERT_EQ(NULL, set->Evict());
+  ASSERT_EQ(line0, set->EvictLRU());
+  ASSERT_EQ(NULL, set->EvictLRU());
 }
 
-TEST_F(DirectMappedCacheSetTest, SetEvictEmptyFull) {
-  ASSERT_EQ(NULL, set->Evict());
+TEST_F(DirectMappedCacheSetTest, SetEvictLRUEmptyFull) {
+  ASSERT_EQ(NULL, set->EvictLRU());
   set->Insert(*line0);
-  ASSERT_EQ(line0, set->Evict());
+  ASSERT_EQ(line0, set->EvictLRU());
 }
 
 TEST_F(DirectMappedCacheSetTest, SetContains) {
   ASSERT_FALSE(set->Contains(line0->address));
   set->Insert(*line0);
   ASSERT_TRUE(set->Contains(line0->address));
-  set->Evict();
+  set->EvictLRU();
   ASSERT_FALSE(set->Contains(line0->address));
 }
 
@@ -77,7 +77,7 @@ TEST_F(DirectMappedCacheSetTest, SetGetLine) {
   ASSERT_EQ(NULL, set->GetLine(line0->address));
   set->Insert(*line0);
   ASSERT_EQ(line0, set->GetLine(line0->address));
-  set->Evict();
+  set->EvictLRU();
   ASSERT_EQ(NULL, set->GetLine(line0->address));
 }
 

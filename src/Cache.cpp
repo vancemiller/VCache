@@ -49,7 +49,7 @@ bool Cache::Insert(CacheLine& line) {
 CacheLine* const Cache::Evict(const ADDRESS address) {
   CacheSet* set = sets.at(GetSetIndex(address));
   if (set != NULL) {
-    return set->Evict();
+    return set->EvictLRU();
   } else {
     // Error
     return NULL;
