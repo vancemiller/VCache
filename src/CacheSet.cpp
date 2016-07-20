@@ -56,13 +56,14 @@ bool CacheSet::Contains(const ADDRESS address) const {
   return it != lines_map.end();
 }
 
-CacheLine* const CacheSet::GetLine(const ADDRESS address) const {
+CacheLine* const CacheSet::AccessLine(const ADDRESS address, const uint8_t n_bytes) const {
   CacheLine* line = NULL;
   TAG tag = cache->GetTag(address);
   boost::unordered_map<TAG, CacheLine*>::const_iterator it = lines_map.find(
       tag);
   if (it != lines_map.end()) {
     line = it->second;
+    line->Access(address, n_bytes);
   }
   return line;
 }

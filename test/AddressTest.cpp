@@ -12,9 +12,8 @@
 
 namespace {
 
-static const uint32_t LINE_SIZE_B = 64;
-
 TEST(AddressTest, AddressSets) {
+  const uint32_t LINE_SIZE_B = 64;
   ASSERT_EQ(2, Address::GetSetCount(128, 1, LINE_SIZE_B));
   ASSERT_EQ(2, Address::GetSetCount(256, 2, LINE_SIZE_B));
   ASSERT_EQ(1, Address::GetSetCount(256, 4, LINE_SIZE_B));
@@ -30,9 +29,11 @@ TEST(AddressTest, AddressOffsetBits) {
 }
 
 TEST(AddressTest, AddressTagBits) {
-  for (unsigned int i = 0;
-      i < sizeof(ADDRESS) * BITS_IN_BYTE - Address::GetOffsetBitCount(LINE_SIZE_B); i++) {
-    ASSERT_EQ(sizeof(ADDRESS) * BITS_IN_BYTE - Address::GetOffsetBitCount(LINE_SIZE_B) - i,
+  const uint32_t LINE_SIZE_B = 64;
+  for (unsigned int i = 0; i < sizeof(ADDRESS) * BITS_IN_BYTE -
+      Address::GetOffsetBitCount(LINE_SIZE_B); i++) {
+    ASSERT_EQ(
+        sizeof(ADDRESS) * BITS_IN_BYTE - Address::GetOffsetBitCount(LINE_SIZE_B) - i,
         Address::GetTagBitCount(i, Address::GetOffsetBitCount(LINE_SIZE_B)));
   }
 }

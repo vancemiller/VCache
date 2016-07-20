@@ -63,7 +63,7 @@ std::vector<CacheLine*>& MultilevelCache::SplitAccess(const ADDRESS address,
             bytes_remaining : bytes_to_end_of_line);
 
     accessed_lines->push_back(
-        &SearchInclusive(address + bytes_accessed, access_size));
+        &InclusiveAccess(address + bytes_accessed, access_size));
 
     bytes_accessed += access_size;
     bytes_remaining -= access_size;
@@ -73,14 +73,14 @@ std::vector<CacheLine*>& MultilevelCache::SplitAccess(const ADDRESS address,
   return *accessed_lines;
 }
 
-CacheLine& MultilevelCache::SearchInclusive(const ADDRESS address,
+CacheLine& MultilevelCache::InclusiveAccess(const ADDRESS address,
     const uint8_t size_B) {
   CacheLine* requested = NULL;
 
   std::vector<Cache*>::iterator cache = caches.begin();
 
   // First, search the L1 for the line
-  requested = (*cache)->GetLine(address);
+  requested = (*cache)->AccessLine(address, size_B);
 
   CacheLine* evicted = NULL;
   // If the line was not found in L1, evict a line if the cache is full
@@ -95,7 +95,7 @@ CacheLine& MultilevelCache::SearchInclusive(const ADDRESS address,
   // while continuing to search for the requested line.
   while (cache < caches.end() && requested == NULL && evicted != NULL) {
     // Search for the requested line
-    requested = (*cache)->GetLine(address);
+    requested = (*cache)->AccessLine(address, size_B);
     // Evict a line if the cache is full to make room for the evicted line
     CacheLine* const tmp = (*cache)->EvictLRU(evicted->address);
     // Insert the previously evicted line
@@ -108,7 +108,7 @@ CacheLine& MultilevelCache::SearchInclusive(const ADDRESS address,
   // If we are not holding any evicted line and have not found the requested line,
   // continue searching.
   while (cache < caches.end() && requested == NULL && evicted == NULL) {
-    requested = (*cache)->GetLine(address);
+    requested = (*cache)->AccessLine(address, size_B);
 
     cache++;
   }
@@ -118,11 +118,12 @@ CacheLine& MultilevelCache::SearchInclusive(const ADDRESS address,
     // Line was not mapped in cache. Create it and insert it in L1.
     requested = new CacheLine(line_size_B,
         address - caches.front()->GetLineOffset(address));
+    requested->Access(address, size_B);
     caches.front()->Insert(*requested);
   }
 
   if (evicted != NULL) {
-    // Remove line from all other levels of the heirarchy (inclusive cache).
+    // Remove line from all other levels of the hierarchy (inclusive cache).
     for (std::vector<Cache*>::iterator it = caches.begin(); it != caches.end();
         it++) {
       (*it)->RemoveLine(evicted->address);

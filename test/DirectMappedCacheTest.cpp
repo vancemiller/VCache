@@ -83,21 +83,21 @@ TEST_F(DirectMappedCacheTest, CacheContains) {
   ASSERT_FALSE(cache->Contains(line1->address));
 }
 
-TEST_F(DirectMappedCacheTest, CacheGetLine) {
-  ASSERT_EQ(NULL, cache->GetLine(line0->address));
-  ASSERT_EQ(NULL, cache->GetLine(line1->address));
+TEST_F(DirectMappedCacheTest, CacheAccessLine) {
+  ASSERT_EQ(NULL, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line1->address, LINE_SIZE));
   cache->Insert(*line0);
-  ASSERT_EQ(line0, cache->GetLine(line0->address));
-  ASSERT_EQ(NULL, cache->GetLine(line1->address));
+  ASSERT_EQ(line0, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line1->address, LINE_SIZE));
   cache->Insert(*line1);
-  ASSERT_EQ(line0, cache->GetLine(line0->address));
-  ASSERT_EQ(line1, cache->GetLine(line1->address));
+  ASSERT_EQ(line0, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(line1, cache->AccessLine(line1->address, LINE_SIZE));
   cache->EvictLRU(line0->address);
-  ASSERT_EQ(NULL, cache->GetLine(line0->address));
-  ASSERT_EQ(line1, cache->GetLine(line1->address));
+  ASSERT_EQ(NULL, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(line1, cache->AccessLine(line1->address, LINE_SIZE));
   cache->EvictLRU(line1->address);
-  ASSERT_EQ(NULL, cache->GetLine(line0->address));
-  ASSERT_EQ(NULL, cache->GetLine(line1->address));
+  ASSERT_EQ(NULL, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line1->address, LINE_SIZE));
 }
 
 TEST_F(DirectMappedCacheTest, CacheRemoveLine) {

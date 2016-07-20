@@ -29,9 +29,11 @@ public:
   virtual ~CacheSet();
 
   /**
-   * Inserts the CacheLine into the CacheSet. Returns true on success and false if the cache is full.
+   * Inserts the CacheLine into the CacheSet. Returns true on success
+   * and false if the cache is full.
    *
-   * If the CacheLine is already be mapped in the CacheSet, moves line to the LRU position and returns true.
+   * If the CacheLine is already be mapped in the CacheSet, moves line
+   * to the LRU position and returns true.
    */
   bool Insert(CacheLine& line);
 
@@ -50,7 +52,8 @@ public:
    * Returns the CacheLine for address or NULL if the line is not mapped.
    * Only examines the TAG field of the address.
    */
-  CacheLine* const GetLine(const ADDRESS address) const;
+  CacheLine* const AccessLine(const ADDRESS address,
+      const uint8_t n_bytes) const;
 
   /**
    * Removes the line corresponding to address.

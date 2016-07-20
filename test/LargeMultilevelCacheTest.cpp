@@ -41,7 +41,7 @@ TEST_F(LargeMultilevelCacheTest, CacheAccess) {
   for (int i = 0; i < access_max; i++) {
     ADDRESS address = rand();
     size_t size = rand() % size_max;
-    cache->Access(address, size);
+    std::vector<CacheLine*> lines = cache->Access(address, size);
   }
   ASSERT_TRUE(true);
 }

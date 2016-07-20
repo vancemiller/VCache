@@ -7,9 +7,8 @@
 
 #include "CacheLine.h"
 
-
 CacheLine::CacheLine(const uint8_t line_size, const ADDRESS address) :
-    dirty(false), address(address) {
+    address(address) {
   accessed_bytes = new boost::dynamic_bitset<>(line_size, false);
 }
 
@@ -17,17 +16,8 @@ CacheLine::~CacheLine() {
   delete accessed_bytes;
 }
 
-void CacheLine::Read(const LINE_OFFSET address, const uint8_t size) {
+void CacheLine::Access(const LINE_OFFSET address, const uint8_t size) {
   AccessBytes(address, size);
-}
-
-void CacheLine::Write(const LINE_OFFSET address, const uint8_t size) {
-  AccessBytes(address, size);
-  dirty = true;
-}
-
-bool CacheLine::isDirty() const {
-  return dirty;
 }
 
 const boost::dynamic_bitset<>& CacheLine::getAccessedBytes() const {

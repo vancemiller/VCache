@@ -42,7 +42,7 @@ private:
    * 8.  Insert the requested cache line into the L1.
    *
    */
-  CacheLine& SearchInclusive(const ADDRESS address, const uint8_t size_B);
+  CacheLine& InclusiveAccess(const ADDRESS address, const uint8_t size_B);
 
 public:
   std::vector<uint64_t> byte_utilizations;

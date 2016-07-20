@@ -98,57 +98,58 @@ TEST_F(AssociativeCacheTest, CacheContains) {
   ASSERT_TRUE(cache->Contains(line3->address));
 }
 
-TEST_F(AssociativeCacheTest, CacheGetLine) {
-  ASSERT_EQ(NULL, cache->GetLine(line0->address));
-  ASSERT_EQ(NULL, cache->GetLine(line1->address));
-  ASSERT_EQ(NULL, cache->GetLine(line2->address));
-  ASSERT_EQ(NULL, cache->GetLine(line3->address));
+TEST_F(AssociativeCacheTest, CacheAccessLine) {
+  ASSERT_EQ(NULL, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line1->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line2->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line3->address, LINE_SIZE));
   cache->Insert(*line0);
-  ASSERT_EQ(line0, cache->GetLine(line0->address));
-  ASSERT_EQ(NULL, cache->GetLine(line1->address));
-  ASSERT_EQ(NULL, cache->GetLine(line2->address));
-  ASSERT_EQ(NULL, cache->GetLine(line3->address));
+  ASSERT_EQ(line0, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line1->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line2->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line3->address, LINE_SIZE));
   cache->Insert(*line1);
-  ASSERT_EQ(line0, cache->GetLine(line0->address));
-  ASSERT_EQ(line1, cache->GetLine(line1->address));
-  ASSERT_EQ(NULL, cache->GetLine(line2->address));
-  ASSERT_EQ(NULL, cache->GetLine(line3->address));
+  ASSERT_EQ(line0, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(line1, cache->AccessLine(line1->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line2->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line3->address, LINE_SIZE));
   cache->Insert(*line2);
-  ASSERT_EQ(line0, cache->GetLine(line0->address));
-  ASSERT_EQ(line1, cache->GetLine(line1->address));
-  ASSERT_EQ(line2, cache->GetLine(line2->address));
-  ASSERT_EQ(NULL, cache->GetLine(line3->address));
+  ASSERT_EQ(line0, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(line1, cache->AccessLine(line1->address, LINE_SIZE));
+  ASSERT_EQ(line2, cache->AccessLine(line2->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line3->address, LINE_SIZE));
   cache->Insert(*line3);
-  ASSERT_EQ(line0, cache->GetLine(line0->address));
-  ASSERT_EQ(line1, cache->GetLine(line1->address));
-  ASSERT_EQ(line2, cache->GetLine(line2->address));
-  ASSERT_EQ(line3, cache->GetLine(line3->address));
+  ASSERT_EQ(line0, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(line1, cache->AccessLine(line1->address, LINE_SIZE));
+  ASSERT_EQ(line2, cache->AccessLine(line2->address, LINE_SIZE));
+  ASSERT_EQ(line3, cache->AccessLine(line3->address, LINE_SIZE));
   cache->EvictLRU(line3->address);
-  ASSERT_EQ(line0, cache->GetLine(line0->address));
-  ASSERT_EQ(line1, cache->GetLine(line1->address));
-  ASSERT_EQ(NULL, cache->GetLine(line2->address));
-  ASSERT_EQ(line3, cache->GetLine(line3->address));
+  ASSERT_EQ(line0, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(line1, cache->AccessLine(line1->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line2->address, LINE_SIZE));
+  ASSERT_EQ(line3, cache->AccessLine(line3->address, LINE_SIZE));
   cache->EvictLRU(line2->address);
-  ASSERT_EQ(line0, cache->GetLine(line0->address));
-  ASSERT_EQ(line1, cache->GetLine(line1->address));
-  ASSERT_EQ(NULL, cache->GetLine(line2->address));
-  ASSERT_EQ(line3, cache->GetLine(line3->address));
+  ASSERT_EQ(line0, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(line1, cache->AccessLine(line1->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line2->address, LINE_SIZE));
+  ASSERT_EQ(line3, cache->AccessLine(line3->address, LINE_SIZE));
   cache->EvictLRU(line1->address);
-  ASSERT_EQ(NULL, cache->GetLine(line0->address));
-  ASSERT_EQ(line1, cache->GetLine(line1->address));
-  ASSERT_EQ(NULL, cache->GetLine(line2->address));
-  ASSERT_EQ(line3, cache->GetLine(line3->address));
+  ASSERT_EQ(NULL, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(line1, cache->AccessLine(line1->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line2->address, LINE_SIZE));
+  ASSERT_EQ(line3, cache->AccessLine(line3->address, LINE_SIZE));
   cache->EvictLRU(line0->address);
-  ASSERT_EQ(NULL, cache->GetLine(line0->address));
-  ASSERT_EQ(line1, cache->GetLine(line1->address));
-  ASSERT_EQ(NULL, cache->GetLine(line2->address));
-  ASSERT_EQ(line3, cache->GetLine(line3->address));
+  ASSERT_EQ(NULL, cache->AccessLine(line0->address, LINE_SIZE));
+  ASSERT_EQ(line1, cache->AccessLine(line1->address, LINE_SIZE));
+  ASSERT_EQ(NULL, cache->AccessLine(line2->address, LINE_SIZE));
+  ASSERT_EQ(line3, cache->AccessLine(line3->address, LINE_SIZE));
 }
 
 TEST(LargeAssociativeCacheTest, BigTest) {
   int ins_count = 0;
   int match_count = 0;
   int remove_count = 0;
+  static const uint8_t LINE_SIZE_B = 64;
   // Cache with 64 byte lines,
   // 8-way associativity
   // 16 sets
@@ -166,6 +167,7 @@ TEST(LargeAssociativeCacheTest, BigTest) {
       uint32_t tag = rand() << (c->n_bits_offset + c->n_bits_set);
       uint32_t set_addr = set << c->n_bits_offset;
       uint32_t line_offset = rand() & ((1 << c->n_bits_offset) - 1);
+      uint8_t n_bytes = rand() % LINE_SIZE_B;
 
       ADDRESS line_start = tag | set_addr;
       ADDRESS address = tag | set_addr | line_offset;
@@ -184,7 +186,7 @@ TEST(LargeAssociativeCacheTest, BigTest) {
         lines[line_start] = line;
         ins_count++;
       } else {
-        CacheLine* requested = c->GetLine(address);
+        CacheLine* requested = c->AccessLine(address, n_bytes);
         ASSERT_EQ(lines[line_start], requested);
         match_count++;
       }

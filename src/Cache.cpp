@@ -60,13 +60,13 @@ bool Cache::Contains(const ADDRESS address) const {
 }
 
 
-CacheLine* const Cache::GetLine(const ADDRESS address) const {
+CacheLine* const Cache::AccessLine(const ADDRESS address, const uint8_t n_bytes) const {
   SET_INDEX set_index = GetSetIndex(address);
   CacheSet* set = sets.at(set_index);
   if (set == NULL) {
     return NULL;
   } else {
-    return set->GetLine(address);
+    return set->AccessLine(address, n_bytes);
   }
 }
 

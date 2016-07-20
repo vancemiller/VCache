@@ -78,7 +78,7 @@ public:
    * Returns a line mapped to by address or NULL if a line is not mapped.
    * Examines the SET and TAG portions of the address.
    */
-  CacheLine* const GetLine(const ADDRESS address) const;
+  CacheLine* const AccessLine(const ADDRESS address, const uint8_t n_bytes) const;
 
   /**
    * Removes the line corresponding to address or does nothing if a line

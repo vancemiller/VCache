@@ -72,12 +72,12 @@ TEST_F(DirectMappedCacheSetTest, SetContains) {
   ASSERT_FALSE(set->Contains(line0->address));
 }
 
-TEST_F(DirectMappedCacheSetTest, SetGetLine) {
-  ASSERT_EQ(NULL, set->GetLine(line0->address));
+TEST_F(DirectMappedCacheSetTest, SetAccessLine) {
+  ASSERT_EQ(NULL, set->AccessLine(line0->address, LINE_SIZE_B));
   set->Insert(*line0);
-  ASSERT_EQ(line0, set->GetLine(line0->address));
+  ASSERT_EQ(line0, set->AccessLine(line0->address, LINE_SIZE_B));
   set->EvictLRU();
-  ASSERT_EQ(NULL, set->GetLine(line0->address));
+  ASSERT_EQ(NULL, set->AccessLine(line0->address, LINE_SIZE_B));
 }
 
 TEST_F(DirectMappedCacheSetTest, SetInsertDuplicate) {

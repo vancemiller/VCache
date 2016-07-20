@@ -113,18 +113,18 @@ TEST_F(AssociativeCacheSetTest, SetContains) {
   ASSERT_TRUE(set->Contains(line2->address));
 }
 
-TEST_F(AssociativeCacheSetTest, SetGetLine) {
-  ASSERT_EQ(NULL, set->GetLine(line1->address));
-  ASSERT_EQ(NULL, set->GetLine(line2->address));
+TEST_F(AssociativeCacheSetTest, SetAccessLine) {
+  ASSERT_EQ(NULL, set->AccessLine(line1->address, LINE_SIZE_B));
+  ASSERT_EQ(NULL, set->AccessLine(line2->address, LINE_SIZE_B));
   set->Insert(*line1);
-  ASSERT_EQ(line1, set->GetLine(line1->address));
-  ASSERT_EQ(NULL, set->GetLine(line2->address));
+  ASSERT_EQ(line1, set->AccessLine(line1->address, LINE_SIZE_B));
+  ASSERT_EQ(NULL, set->AccessLine(line2->address, LINE_SIZE_B));
   set->Insert(*line2);
-  ASSERT_EQ(line1, set->GetLine(line1->address));
-  ASSERT_EQ(line2, set->GetLine(line2->address));
+  ASSERT_EQ(line1, set->AccessLine(line1->address, LINE_SIZE_B));
+  ASSERT_EQ(line2, set->AccessLine(line2->address, LINE_SIZE_B));
   set->EvictLRU();
-  ASSERT_EQ(NULL, set->GetLine(line1->address));
-  ASSERT_EQ(line2, set->GetLine(line2->address));
+  ASSERT_EQ(NULL, set->AccessLine(line1->address, LINE_SIZE_B));
+  ASSERT_EQ(line2, set->AccessLine(line2->address, LINE_SIZE_B));
 }
 
 TEST_F(AssociativeCacheSetTest, SetInsertDuplicates) {
@@ -132,11 +132,11 @@ TEST_F(AssociativeCacheSetTest, SetInsertDuplicates) {
   ASSERT_TRUE(set->Insert(*line1));
   ASSERT_TRUE(set->Insert(*line2));
   ASSERT_TRUE(set->Insert(*line1));
-  ASSERT_EQ(line1, set->GetLine(line1->address));
-  ASSERT_EQ(line2, set->GetLine(line2->address));
+  ASSERT_EQ(line1, set->AccessLine(line1->address, LINE_SIZE_B));
+  ASSERT_EQ(line2, set->AccessLine(line2->address, LINE_SIZE_B));
   set->EvictLRU();
-  ASSERT_EQ(line1, set->GetLine(line1->address));
-  ASSERT_EQ(NULL, set->GetLine(line2->address));
+  ASSERT_EQ(line1, set->AccessLine(line1->address, LINE_SIZE_B));
+  ASSERT_EQ(NULL, set->AccessLine(line2->address, LINE_SIZE_B));
 }
 
 TEST_F(AssociativeCacheSetTest, SetRemoveLine) {

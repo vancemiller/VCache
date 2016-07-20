@@ -17,7 +17,6 @@ class CacheLine {
 private:
   // A vector<bool> is a bit vector and will use accessed_bytes bits of storage.
   boost::dynamic_bitset<> *accessed_bytes;
-  bool dirty;
 
 public:
   const ADDRESS address;
@@ -46,23 +45,12 @@ public:
   virtual ~CacheLine();
 
   /**
-   * Read the CacheLine. Sets accessed_bytes according to address and size.
+   * Accesses the CacheLine. Sets accessed_bytes according to address and size.
    */
-  void Read(const ADDRESS address, const uint8_t size);
+  void Access(const ADDRESS address, const uint8_t size);
 
   /**
-   * Write the CacheLine. Sets accessed_bytes according to address and size and
-   * sets the dirty bit.
-   */
-  void Write(const ADDRESS address, const uint8_t size);
-
-  /**
-   * Returns true iff the line has been written to.
-   */
-  bool isDirty() const;
-
-  /**
-   * Returns a vector<bool> of the accessed bytes in the cache line.
+   * Returns a bitset of the accessed bytes in the cache line.
    * The bit at position i is set iff byte i was accessed.
    */
   const boost::dynamic_bitset<>& getAccessedBytes() const;
