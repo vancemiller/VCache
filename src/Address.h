@@ -48,10 +48,10 @@ public:
    * Returns the number of sets required in a cache of capacity_B bytes
    * with *-way associativity and line_size_B byte cache lines.
    */
-  static const uint32_t GetSetCount(uint32_t capacity_B, uint32_t associativity,
-      uint32_t line_size_B) {
+  static const uint32_t GetSetCount(uint64_t capacity_B, uint16_t associativity,
+      uint16_t line_size_B) {
     return (uint32_t) ceil(
-        (double) capacity_B / (double) (associativity * line_size_B));
+        (long double) capacity_B / (long double) (associativity * line_size_B));
   }
 
   /**

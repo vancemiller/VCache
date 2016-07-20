@@ -60,8 +60,8 @@ public:
    * @param associativities Cache associativities for each level of the cache.
    * @param line_size_B The number of bytes each cache line will hold, defaults to 64.
    */
-  MultilevelCache(const std::vector<uint32_t>& capacities_B,
-      const std::vector<uint32_t>& assocativities, const uint32_t line_size_B =
+  MultilevelCache(const std::vector<uint64_t>& capacities_B,
+      const std::vector<uint16_t>& assocativities, const uint16_t line_size_B =
       DEFAULT_LINE_SIZE);
   virtual ~MultilevelCache();
 

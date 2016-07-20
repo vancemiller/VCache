@@ -39,8 +39,8 @@ public:
   /**
    * Factory constructor for a Cache.
    */
-  static Cache* const Create(const uint32_t capacity_B,
-      const uint32_t associativity, const uint32_t line_size_B) {
+  static Cache* const Create(const uint64_t capacity_B,
+      const uint16_t associativity, const uint16_t line_size_B) {
     const uint32_t n_sets = Address::GetSetCount(capacity_B, associativity,
         line_size_B);
     const uint8_t n_bits_set = Address::GetSetBitCount(n_sets);

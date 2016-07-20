@@ -18,9 +18,9 @@ protected:
   MultilevelCache* cache;
 
   virtual void SetUp() {
-    std::vector<uint32_t> capacities_B;
-    std::vector<uint32_t> associativities;
-    uint32_t line_size_B = 1;
+    std::vector<uint64_t> capacities_B;
+    std::vector<uint16_t> associativities;
+    uint16_t line_size_B = 1;
     capacities_B.push_back(1);
     capacities_B.push_back(2);
     capacities_B.push_back(4);

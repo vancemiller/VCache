@@ -13,15 +13,15 @@
 #include <stdexcept>
 #include <stddef.h>
 
-MultilevelCache::MultilevelCache(const std::vector<uint32_t>& capacities_B,
-    const std::vector<uint32_t>& associativities, const uint32_t line_size_B) :
+MultilevelCache::MultilevelCache(const std::vector<uint64_t>& capacities_B,
+    const std::vector<uint16_t>& associativities, const uint16_t line_size_B) :
     n_levels(capacities_B.size()), line_size_B(line_size_B) {
   if (capacities_B.size() != associativities.size()) {
     throw std::invalid_argument(
         "Capacity and associativity arguments must be the same length.");
   }
-  std::vector<uint32_t>::const_iterator cap = capacities_B.begin();
-  std::vector<uint32_t>::const_iterator ass = associativities.begin();
+  std::vector<uint64_t>::const_iterator cap = capacities_B.begin();
+  std::vector<uint16_t>::const_iterator ass = associativities.begin();
   int level = 1;
   while (cap != capacities_B.end()) {
     caches.push_back(Cache::Create(*cap, *ass, line_size_B));
