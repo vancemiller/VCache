@@ -7,10 +7,11 @@
 
 #include "MultilevelCache.h"
 
+#include <algorithm>
+#include <boost/dynamic_bitset.hpp>
+#include <math.h>
 #include <stdexcept>
 #include <stddef.h>
-#include <math.h>
-#include <algorithm>
 
 MultilevelCache::MultilevelCache(const std::vector<uint32_t>& capacities_B,
     const std::vector<uint32_t>& associativities, const uint32_t line_size_B) :
@@ -126,13 +127,11 @@ CacheLine& MultilevelCache::SearchInclusive(const ADDRESS address,
         it++) {
       (*it)->RemoveLine(evicted->address);
     }
-    std::vector<bool> accessedBytes = evicted->getAccessedBytes();
-    int utilization = std::count(accessedBytes.begin(), accessedBytes.end(),
-        true);
+    boost::dynamic_bitset<> accessedBytes = evicted->getAccessedBytes();
+    int utilization = accessedBytes.count();
     if (utilization) {
-      byte_utilizations.at(utilization - 1)++;
-    }
-    // We have evicted a line from the cache hierarchy. Delete it.
+      byte_utilizations.at(utilization - 1)++;}
+      // We have evicted a line from the cache hierarchy. Delete it.
     delete evicted;
   }
   return *requested;

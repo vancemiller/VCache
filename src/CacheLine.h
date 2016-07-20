@@ -8,14 +8,15 @@
 #ifndef CACHELINE_H_
 #define CACHELINE_H_
 
-#include <vector>
+#include <boost/dynamic_bitset.hpp>
 #include <iostream>
+
 #include "Address.h"
 
 class CacheLine {
 private:
   // A vector<bool> is a bit vector and will use accessed_bytes bits of storage.
-  std::vector<bool> accessed_bytes;
+  boost::dynamic_bitset<> *accessed_bytes;
   bool dirty;
 
 public:
@@ -64,19 +65,11 @@ public:
    * Returns a vector<bool> of the accessed bytes in the cache line.
    * The bit at position i is set iff byte i was accessed.
    */
-  const std::vector<bool>& getAccessedBytes() const;
+  const boost::dynamic_bitset<>& getAccessedBytes() const;
 
-  friend std::ostream& operator<<(std::ostream& stream,
-      const CacheLine& line) {
+  friend std::ostream& operator<<(std::ostream& stream, const CacheLine& line) {
     stream << "Address: " << std::hex << line.address << std::dec;
-    stream << ", Utilization: ";
-    for (std::vector<bool>::const_iterator it = line.accessed_bytes.begin(); it != line.accessed_bytes.end(); it++) {
-      if ((*it)) {
-        stream << "1";
-      } else {
-        stream << "0";
-      }
-    }
+    stream << ", Utilization: " << line.accessed_bytes;
     return stream;
   }
 };

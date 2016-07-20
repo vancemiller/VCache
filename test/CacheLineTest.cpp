@@ -52,9 +52,9 @@ TEST_F(CacheLineTest, AccessedBytes1) {
   const uint32_t read_one_byte = 1;
   for (uint32_t i = 0; i < LINE_SIZE; i++) {
     line->Read(LINE_ADDRESS + i, read_one_byte);
-    ASSERT_TRUE(line->getAccessedBytes().at(i));
+    ASSERT_TRUE(line->getAccessedBytes()[i]);
     for (uint32_t j = i + 1; j < LINE_SIZE; j++) {
-      ASSERT_FALSE(line->getAccessedBytes().at(j));
+      ASSERT_FALSE(line->getAccessedBytes()[j]);
     }
   }
 }
@@ -63,10 +63,10 @@ TEST_F(CacheLineTest, AccessedBytes2) {
   for (uint32_t i = 0; i < LINE_SIZE; i += n_bytes_rw) {
     line->Read(LINE_ADDRESS + i, n_bytes_rw);
     for (uint32_t j = 0; j < n_bytes_rw; j++) {
-      ASSERT_TRUE(line->getAccessedBytes().at(i + j));
+      ASSERT_TRUE(line->getAccessedBytes()[i + j]);
     }
     for (uint32_t j = i + n_bytes_rw; j < LINE_SIZE; j++) {
-      ASSERT_FALSE(line->getAccessedBytes().at(j));
+      ASSERT_FALSE(line->getAccessedBytes()[j]);
     }
   }
 }
@@ -76,10 +76,10 @@ TEST_F(CacheLineTest, AccessedBytes3) {
   for (uint32_t i = 0; i < LINE_SIZE; i += n_bytes_rw) {
     line->Read(LINE_ADDRESS + i, n_bytes_rw);
     for (uint32_t j = 0; j < n_bytes_rw; j++) {
-      ASSERT_TRUE(line->getAccessedBytes().at(i + j));
+      ASSERT_TRUE(line->getAccessedBytes()[i + j]);
     }
     for (uint32_t j = i + n_bytes_rw; j < LINE_SIZE; j++) {
-      ASSERT_TRUE(line->getAccessedBytes().at(j));
+      ASSERT_TRUE(line->getAccessedBytes()[j]);
     }
   }
 }
@@ -91,10 +91,10 @@ TEST_F(CacheLineTest, AccessedBytes4) {
   for (uint32_t i = 0; i < LINE_SIZE; i += n_bytes_rw) {
     line->Write(LINE_ADDRESS + i, n_bytes_rw);
     for (uint32_t j = 0; j < n_bytes_rw; j++) {
-      ASSERT_TRUE(line->getAccessedBytes().at(i + j));
+      ASSERT_TRUE(line->getAccessedBytes()[i + j]);
     }
     for (uint32_t j = i + n_bytes_rw; j < LINE_SIZE; j++) {
-      ASSERT_FALSE(line->getAccessedBytes().at(j));
+      ASSERT_FALSE(line->getAccessedBytes()[j]);
     }
   }
 }
@@ -107,10 +107,10 @@ TEST_F(CacheLineTest, AccessedBytes5) {
   for (uint32_t i = 0; i < LINE_SIZE; i += n_bytes_rw) {
     line->Write(LINE_ADDRESS + i, n_bytes_rw);
     for (uint32_t j = 0; j < n_bytes_rw; j++) {
-      ASSERT_TRUE(line->getAccessedBytes().at(i + j));
+      ASSERT_TRUE(line->getAccessedBytes()[i + j]);
     }
     for (uint32_t j = i + n_bytes_rw; j < LINE_SIZE; j++) {
-      ASSERT_TRUE(line->getAccessedBytes().at(j));
+      ASSERT_TRUE(line->getAccessedBytes()[j]);
     }
   }
 }
