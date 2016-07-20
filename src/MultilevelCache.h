@@ -47,7 +47,7 @@ private:
 public:
   std::vector<uint64_t> byte_utilizations;
   const uint8_t n_levels;
-  const uint32_t line_size_B;
+  const uint16_t line_size_B;
 
 public:
   /**
