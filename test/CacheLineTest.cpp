@@ -128,4 +128,15 @@ TEST_F(CacheLineTest, LargeReadTest) {
      line->Read(LINE_ADDRESS, LINE_SIZE);
    }
 }
+
+TEST_F(CacheLineTest, CreateLines) {
+  const int create_max = 1024 * 1024;
+  for (int i = 0; i < create_max; i++) {
+    CacheLine line(LINE_SIZE, LINE_ADDRESS + i);
+    line.Read(LINE_ADDRESS + i, LINE_SIZE);
+    if (line.isDirty()) {
+      std::cerr << "This test is here to prevent the compiler from optimizing away line." << std::endl;
+    }
+  }
+}
 }

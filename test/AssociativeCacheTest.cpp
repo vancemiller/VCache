@@ -145,4 +145,54 @@ TEST_F(AssociativeCacheTest, CacheGetLine) {
   ASSERT_EQ(line3, cache->GetLine(line3->address));
 }
 
+TEST(LargeAssociativeCacheTest, BigTest) {
+  int ins_count = 0;
+  int match_count = 0;
+  int remove_count = 0;
+  // Cache with 64 byte lines,
+  // 8-way associativity
+  // 16 sets
+  const int associativity = 4;
+  const int sets = 64;
+  const int access_max = 4096 * associativity;
+  Cache* c = Cache::Create(associativity * sets * LINE_SIZE_B, associativity,
+      LINE_SIZE_B);
+
+  std::map<ADDRESS, CacheLine*> lines;
+
+  for (int set = 0; set < sets; set++) {
+    for (int access = 0; access < access_max; access++) {
+
+      uint32_t tag = rand() << (c->n_bits_offset + c->n_bits_set);
+      uint32_t set_addr = set << c->n_bits_offset;
+      uint32_t line_offset = rand() & ((1 << c->n_bits_offset) - 1);
+
+      ADDRESS line_start = tag | set_addr;
+      ADDRESS address = tag | set_addr | line_offset;
+
+      if (!c->Contains(address)) {
+        CacheLine* line = new CacheLine(LINE_SIZE_B, line_start);
+        if (!c->Insert(*line)) {
+          CacheLine* evicted = c->EvictLRU(address);
+          ASSERT_FALSE(evicted == NULL);
+          ASSERT_TRUE(c->Insert(*line));
+          lines.erase(line_start);
+          delete evicted;
+          remove_count++;
+        }
+
+        lines[line_start] = line;
+        ins_count++;
+      } else {
+        CacheLine* requested = c->GetLine(address);
+        ASSERT_EQ(lines[line_start], requested);
+        match_count++;
+      }
+    }
+  }
+  ASSERT_EQ(access_max * sets, ins_count + match_count);
+
+  delete c;
+}
+
 }

@@ -171,4 +171,13 @@ TEST_F(AssociativeCacheSetTest, SetLargeInsert) {
     }
   }
 }
+
+TEST_F(AssociativeCacheSetTest, SetLargeContains) {
+  const int access_max = 1024 * 1024;
+  set->Insert(*line1);
+  for (int i = 0; i < access_max; i++) {
+    ASSERT_TRUE(set->Contains(line1->address));
+  }
+}
+
 }
