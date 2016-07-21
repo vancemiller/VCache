@@ -20,6 +20,8 @@ MultilevelCache::MultilevelCache(const std::vector<uint64_t>& capacities_B,
     throw std::invalid_argument(
         "Capacity and associativity arguments must be the same length.");
   }
+  hits = 0;
+  misses = 0;
   std::vector<uint64_t>::const_iterator cap = capacities_B.begin();
   std::vector<uint16_t>::const_iterator ass = associativities.begin();
   int level = 1;
@@ -120,6 +122,9 @@ CacheLine& MultilevelCache::InclusiveAccess(const ADDRESS address,
         address - caches.front()->GetLineOffset(address));
     requested->Access(address, size_B);
     caches.front()->Insert(*requested);
+    misses++;
+  } else {
+    hits++;
   }
 
   if (evicted != NULL) {
