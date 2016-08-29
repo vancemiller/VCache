@@ -14,10 +14,10 @@
 
 // It's too complicated to get the special pin makefile to work,
 // so just include these files directly.
-#include "MultilevelCache.cpp"
-#include "Cache.cpp"
-#include "CacheSet.cpp"
-#include "CacheLine.cpp"
+#include "src/MultilevelCache.cpp"
+#include "src/Cache.cpp"
+#include "src/CacheSet.cpp"
+#include "src/CacheLine.cpp"
 
 #define PROGRESS_INDICATOR 1000000
 #define PROGRESS_THRESHOLD 1
