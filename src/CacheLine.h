@@ -57,7 +57,10 @@ public:
 
   friend std::ostream& operator<<(std::ostream& stream, const CacheLine& line) {
     stream << "Address: " << std::hex << line.address << std::dec;
-    stream << ", Utilization: " << line.accessed_bytes;
+    stream << ", Utilization: ";
+    for (size_t i = 0; i < line.accessed_bytes->size(); i++) {
+      stream << ((*(line.accessed_bytes))[i] ? "1" : "0");
+    }
     return stream;
   }
 };

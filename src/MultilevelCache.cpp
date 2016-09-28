@@ -133,11 +133,14 @@ CacheLine& MultilevelCache::InclusiveAccess(const ADDRESS address,
         it++) {
       (*it)->RemoveLine(evicted->address);
     }
+    // Count utilized bits
     boost::dynamic_bitset<> accessedBytes = evicted->getAccessedBytes();
     int utilization = accessedBytes.count();
     if (utilization) {
-      byte_utilizations.at(utilization - 1)++;}
-      // We have evicted a line from the cache hierarchy. Delete it.
+      byte_utilizations.at(utilization - 1)++;
+    }
+    // We have evicted a line from the cache hierarchy. Delete it.
+    std::cout << "Evicted: " << *evicted << std::endl;
     delete evicted;
   }
   return *requested;
